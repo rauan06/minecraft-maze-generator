@@ -18,7 +18,7 @@ def main():
 
 
     start = time.time()
-    with open("maze.txt", "w") as out:
+    with open("maze.csv", "w") as out:
         for row in maze:
             for i in range(len(row) - 1):
                 out.write(str(row[i])[0] + ", ")
