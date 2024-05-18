@@ -1,4 +1,7 @@
-from collections import deque
+import matplotlib.pyplot as plt
+import numpy as np
+import random
+from queue import Queue
 from random import randint
 import time
 
@@ -8,55 +11,55 @@ a = 100
 
 def main():
     start = time.time()
-    maze = [['0' for _ in range(a + 2)] for _ in range(a + 2)]
-
-    for i in range(a + 2):
-        maze[0][i] = '1'
-        maze[i][0] = '1'
-        maze[i][a + 1] = '1'
-        maze[a + 1][i] = '1'
-    
-    # Generation of start and finsih coordinates
-    # start_x, start_y = random_coordinate(), random_coordinate()
-    # finish_x, finish_y = random_coordinate(), random_coordinate()
-    # maze[start_x][start_y] = 'S'
-    # maze[finish_x][finish_y] = 'F'
+    maze = create_maze(10)
+    print(maze)
     finish = time.time()
-    print("Time for initializing:", finish - start, "seconds")
-
-    q = deque()
-    q.append((1, 1, [(1, 1)], 0))
-    searched = []
-
-    start = time.time()
-    while q:
-        x, y, moves, length = q.popleft()
-        if (x, y) == (a, a + 1):
-            for dx, dy in moves:
-                maze[dx][dy] = 'W'
-            break
-
-
-        if (x, y) not in searched:  
-            for dx, dy in [(1, 0), (0, 1), (-1, 0), (0, -1)]:
-                if 1 <= x + dx <= a and 1 <= y + dy <= a + 1:
-                    q.append((x + dx, y + dy, moves + [(x, y)], length + 1))
-                    searched.append((x, y))
-    finish = time.time()
-    print("Time for BFS:", finish - start, "seconds")
+    print("Time for maze creation:", finish - start, "seconds")
 
 
     start = time.time()
     with open("maze.txt", "w") as out:
         for row in maze:
-            for wall in row:
-                out.write(wall)
-            out.write("\n")
+            for i in range(len(row) - 1):
+                out.write(str(row[i])[0] + ", ")
+            out.write(str(row[-1])[0] + "\n")
     finish = time.time()
     print("Time for writing:", finish - start, "seconds")
 
-def random_coordinate() -> int:
-    return randint(1, a - 2)
+
+def create_maze(dim):
+    # Create a grid filled with walls
+    maze = np.ones((dim*2+1, dim*2+1))
+
+    # Define the starting point
+    x, y = (0, 0)
+    maze[2*x+1, 2*y+1] = 0
+
+    # Initialize the stack with the starting point
+    stack = [(x, y)]
+    while len(stack) > 0:
+        x, y = stack[-1]
+
+        # Define possible directions
+        directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+        random.shuffle(directions)
+
+        for dx, dy in directions:
+            nx, ny = x + dx, y + dy
+            if nx >= 0 and ny >= 0 and nx < dim and ny < dim and maze[2*nx+1, 2*ny+1] == 1:
+                maze[2*nx+1, 2*ny+1] = 0
+                maze[2*x+1+dx, 2*y+1+dy] = 0
+                stack.append((nx, ny))
+                break
+        else:
+            stack.pop()
+            
+    # Create an entrance and an exit
+    maze[1, 0] = 0
+    maze[-2, -1] = 0
+
+    return maze
+
 
 if __name__ == '__main__':
     main()
