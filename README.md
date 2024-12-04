@@ -1,2 +1,2 @@
 # minecraft-maze-generator
-Minecraft maze generator using python.
+Minecraft maze generator using go.
