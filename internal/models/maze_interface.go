@@ -69,6 +69,16 @@ func (c *Cube) GenerateMazePattern() {
 		endY, endX = rand.Intn(c.Width), rand.Intn(c.Width)
 	}
 
+	q := []struct {
+		Y int
+		X int
+	}{
+		{Y: startY, X: startX},
+	}
+
+	for len(q) != 0 {
+		// TODO: maze generation logic
+	}
 }
 
 // Helper functions
